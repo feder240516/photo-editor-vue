@@ -1,0 +1,5 @@
+#!/bin/sh
+
+yarn syncpack list-mismatches
+yarn type-check
+yarn test
