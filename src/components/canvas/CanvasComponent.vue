@@ -1,9 +1,11 @@
 <script setup>
+import { useCanvasStore } from '@/stores/canvas';
 import { useImagesStore } from '@/stores/images';
-import { ref } from 'vue';
-const { imageIDs, images } = useImagesStore();
-const height = ref(640);
-const width = ref(640);
+import { storeToRefs } from 'pinia';
+const canvasStore = useCanvasStore();
+const { height, width } = storeToRefs(canvasStore);
+const imagesStore = useImagesStore();
+const { imageIDs, images } = storeToRefs(imagesStore);
 </script>
 <template>
   <div
@@ -17,7 +19,13 @@ const width = ref(640);
       v-for="imageID in imageIDs"
       :src="images[imageID].data"
       :key="imageID"
-      class="absolute"
+      class="absolute max-w-none"
+      :style="{
+        width: `${images[imageID].width}px`,
+        height: `${images[imageID].height}px`,
+        left: `${images[imageID].x}px`,
+        top: `${images[imageID].y}px`,
+      }"
     />
   </div>
 </template>

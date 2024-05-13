@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useImagesStore } from '@/stores/images';
+import loadImageData from '@/utils/loadImageData';
 
 const imagesStore = useImagesStore();
 
@@ -9,15 +10,11 @@ const onClickAddFileButton = () => {
   fileInput.value?.click();
 };
 
-const onLoadImage = (event: Event) => {
+const onLoadImage = async (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0];
   if (!file) return;
-  console.log(file);
-  const fileReader = new FileReader();
-  fileReader.onload = () => {
-    imagesStore.addImage(file, fileReader.result as string);
-  };
-  fileReader.readAsDataURL(file);
+  const imageData = await loadImageData(file);
+  imagesStore.addImage(imageData);
 };
 </script>
 <template>
