@@ -2,10 +2,11 @@
 import { useCanvasStore } from '@/stores/canvas';
 import { useImagesStore } from '@/stores/images';
 import { storeToRefs } from 'pinia';
+import ImageComponent from './ImageComponent.vue';
 const canvasStore = useCanvasStore();
 const { height, width } = storeToRefs(canvasStore);
 const imagesStore = useImagesStore();
-const { imageIDs, images } = storeToRefs(imagesStore);
+const { imageIDs } = storeToRefs(imagesStore);
 </script>
 <template>
   <div
@@ -15,18 +16,7 @@ const { imageIDs, images } = storeToRefs(imagesStore);
     }"
     class="bg-red-500 overflow-hidden relative"
   >
-    <img
-      v-for="imageID in imageIDs"
-      :src="images[imageID].data"
-      :key="imageID"
-      class="absolute max-w-none"
-      :style="{
-        width: `${images[imageID].width}px`,
-        height: `${images[imageID].height}px`,
-        left: `${images[imageID].x}px`,
-        top: `${images[imageID].y}px`,
-      }"
-    />
+    <ImageComponent v-for="imageID in imageIDs" :key="imageID" :imageID />
   </div>
 </template>
 <style></style>
