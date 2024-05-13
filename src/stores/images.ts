@@ -37,5 +37,13 @@ export const useImagesStore = defineStore('images', () => {
     imageIDs.value.push(id);
   }
 
-  return { images, imageIDs, addImage };
+  function moveImageTo(imageID: string, x: number, y: number) {
+    const image = images.value[imageID];
+    if (image) {
+      image.x = x;
+      image.y = y;
+    }
+  }
+
+  return { images, imageIDs, addImage, moveImageTo };
 });
