@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDragStore } from '@/stores/drag';
 import { useImagesStore } from '@/stores/images';
+import { useSelectionStore } from '@/stores/selection';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 
@@ -10,11 +11,17 @@ const { imageID } = defineProps<{
 
 const imagesStore = useImagesStore();
 const { images } = storeToRefs(imagesStore);
+const selectionStore = useSelectionStore();
+const { selectedImage } = storeToRefs(selectionStore);
+const { setSelectedImage } = selectionStore;
 const dragStore = useDragStore();
 const { dragging, objectDragged, mousePosition } = storeToRefs(dragStore);
 const { startDragging } = dragStore;
 const draggingThis = computed(
   () => dragging.value && objectDragged.value === imageID
+);
+const isThisSelected = computed(
+  () => selectedImage.value != null && selectedImage.value === imageID
 );
 const { moveImageTo } = imagesStore;
 const initialPosition = ref({ x: 0, y: 0 });
@@ -38,14 +45,12 @@ watch(draggingThis, (newDraggingThis, oldDraggingThis) => {
     moveImageTo(imageID, localPosition.value.x, localPosition.value.y);
   }
 });
-// const localY = ref(0);
-
-const imgRef = ref<HTMLImageElement | null>(null);
 
 function onStartDragging(event: MouseEvent) {
   const imageData = images.value[imageID];
   if (!dragging.value && imageData) {
     startDragging({ x: event.screenX, y: event.screenY }, imageID);
+    setSelectedImage(imageID);
     initialPosition.value = {
       x: imageData.x,
       y: imageData.y,
@@ -56,17 +61,10 @@ function onStartDragging(event: MouseEvent) {
     };
   }
 }
-// function onEndDragging() {
-//   dragging.value = false;
-//   console.log(imageID, localX.value, localY.value);
-//   moveImageTo(imageID, localX.value, localY.value);
-// }
 </script>
 <template>
-  <img
+  <div
     v-if="images[imageID]"
-    ref="imgRef"
-    :src="images[imageID]!.data"
     class="absolute max-w-none"
     :style="{
       width: `${images[imageID]!.width}px`,
@@ -74,7 +72,42 @@ function onStartDragging(event: MouseEvent) {
       left: `${draggingThis ? localPosition.x : images[imageID]!.x}px`,
       top: `${draggingThis ? localPosition.y : images[imageID]!.y}px`,
     }"
-    @mousedown="onStartDragging"
     :draggable="false"
-  />
+    @mousedown="onStartDragging"
+  >
+    <img
+      :src="images[imageID]!.data"
+      class="absolute max-w-none w-full h-full"
+      :draggable="false"
+    />
+    <div
+      v-if="images[imageID] && isThisSelected"
+      class="absolute max-w-none w-full h-full border-teal-400 bg-transparent pointer-events-none border-2"
+    >
+      <div
+        class="absolute top-0 left-0 w-2 h-2 -translate-x-1/2 -translate-y-1/2 bg-teal-400"
+      ></div>
+      <div
+        class="absolute top-0 right-0 w-2 h-2 translate-x-1/2 -translate-y-1/2 bg-teal-400"
+      ></div>
+      <div
+        class="absolute bottom-0 left-0 w-2 h-2 -translate-x-1/2 translate-y-1/2 bg-teal-400"
+      ></div>
+      <div
+        class="absolute bottom-0 right-0 w-2 h-2 translate-x-1/2 translate-y-1/2 bg-teal-400"
+      ></div>
+      <div
+        class="absolute top-1/2 left-0 w-2 h-2 -translate-x-1/2 -translate-y-1/2 bg-teal-400"
+      ></div>
+      <div
+        class="absolute top-1/2 right-0 w-2 h-2 translate-x-1/2 -translate-y-1/2 bg-teal-400"
+      ></div>
+      <div
+        class="absolute top-0 left-1/2 w-2 h-2 -translate-x-1/2 -translate-y-1/2 bg-teal-400"
+      ></div>
+      <div
+        class="absolute bottom-0 left-1/2 w-2 h-2 -translate-x-1/2 translate-y-1/2 bg-teal-400"
+      ></div>
+    </div>
+  </div>
 </template>

@@ -17,7 +17,9 @@ export const useImagesStore = defineStore('images', () => {
       }
     >
   >({});
+
   const imageIDs = ref<string[]>([]);
+
   function addImage(image: {
     filename: string;
     data: string;
@@ -45,5 +47,10 @@ export const useImagesStore = defineStore('images', () => {
     }
   }
 
-  return { images, imageIDs, addImage, moveImageTo };
+  return {
+    images,
+    imageIDs,
+    addImage,
+    moveImageTo,
+  };
 });
