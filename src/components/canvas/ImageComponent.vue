@@ -117,6 +117,7 @@ function onStartResizing(event: MouseEvent) {
       top: `${draggingThis ? localPosition.y : images[imageID]!.y}px`,
     }"
     :draggable="false"
+    @dragstart.prevent
     @mousedown="onStartDragging"
     ref="imageRef"
   >
@@ -128,10 +129,12 @@ function onStartResizing(event: MouseEvent) {
       :src="images[imageID]!.data"
       class="absolute max-w-none w-full h-full select-none"
       :draggable="false"
+      @dragstart.prevent
     />
     <div
       v-if="images[imageID] && isThisSelected"
       class="absolute max-w-none w-full h-full border-teal-400 bg-transparent pointer-events-none border-2"
+      data-export-ignore
     >
       <div
         data-name="top-left"

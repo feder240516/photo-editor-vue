@@ -4,14 +4,13 @@ import { useImagesStore } from '@/stores/images';
 import { useSelectionStore } from '@/stores/selection';
 import { storeToRefs } from 'pinia';
 import ImageComponent from './ImageComponent.vue';
-import { ref } from 'vue';
+
 const canvasStore = useCanvasStore();
-const { height, width } = storeToRefs(canvasStore);
+const { height, width, canvasRef } = storeToRefs(canvasStore);
 const imagesStore = useImagesStore();
 const { imageIDs } = storeToRefs(imagesStore);
 const selectionStore = useSelectionStore();
 const { clearSelection } = selectionStore;
-const canvasRef = ref<HTMLDivElement | null>(null);
 function onClickCanvas(event: MouseEvent) {
   if (event.target === canvasRef.value) {
     clearSelection();
