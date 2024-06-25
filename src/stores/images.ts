@@ -47,10 +47,19 @@ export const useImagesStore = defineStore('images', () => {
     }
   }
 
+  function resizeImageTo(imageID: string, width: number, height: number) {
+    const image = images.value[imageID];
+    if (image) {
+      image.width = width;
+      image.height = height;
+    }
+  }
+
   return {
     images,
     imageIDs,
     addImage,
     moveImageTo,
+    resizeImageTo,
   };
 });

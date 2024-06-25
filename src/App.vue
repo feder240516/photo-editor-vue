@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useDragStore } from './stores/drag';
+import { useActionsStore } from './stores/actions';
 import { storeToRefs } from 'pinia';
-const dragStore = useDragStore();
-const { dragging } = storeToRefs(dragStore);
-const { stopDragging, updateMousePosition } = dragStore;
+const actionsStore = useActionsStore();
+const { trackingMouseMovement } = storeToRefs(actionsStore);
+const { stopTrackingMouse, updateMousePosition } = actionsStore;
 onMounted(() => {
   document.addEventListener('mousemove', (event) => {
-    if (dragging) {
-      updateMousePosition({ x: event.screenX, y: event.screenY });
+    if (trackingMouseMovement.value) {
+      updateMousePosition({ x: event.pageX, y: event.pageY });
     }
   });
   document.addEventListener('mouseup', () => {
-    stopDragging();
+    stopTrackingMouse();
   });
 });
 </script>

@@ -26,7 +26,7 @@ function onClickCanvas(event: MouseEvent) {
     }"
     class="bg-red-500 overflow-hidden relative"
     ref="canvasRef"
-    @click="onClickCanvas"
+    @mousedown="onClickCanvas"
   >
     <ImageComponent v-for="imageID in imageIDs" :key="imageID" :imageID />
   </div>
