@@ -2,32 +2,35 @@ import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { v4 as uuid } from 'uuid';
 
+export type AddImageArgs = {
+  filename: string;
+  data: string;
+  height: number;
+  width: number;
+};
+
+export type ImageData = {
+  id: string;
+  data: string;
+  filename: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
 export const useImagesStore = defineStore('images', () => {
-  const images = ref<
-    Record<
-      string,
-      {
-        id: string;
-        data: string;
-        filename: string;
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-      }
-    >
-  >({});
+  const images = ref<Record<string, ImageData>>({});
 
   const imageIDs = ref<string[]>([]);
 
-  function addImage(image: {
-    filename: string;
-    data: string;
-    height: number;
-    width: number;
-  }) {
+  function getImageByID(imageID: string) {
+    return images.value[imageID];
+  }
+
+  function addImage(image: AddImageArgs): ImageData {
     const id = uuid();
-    images.value[id] = {
+    const newImage = (images.value[id] = {
       id,
       data: image.data,
       filename: image.filename,
@@ -35,11 +38,12 @@ export const useImagesStore = defineStore('images', () => {
       y: 0,
       width: image.width,
       height: image.height,
-    };
+    });
     imageIDs.value.push(id);
+    return newImage;
   }
 
-  function moveImageTo(imageID: string, x: number, y: number) {
+  function moveImageTo(imageID: string, x: number, y: number): void {
     const image = images.value[imageID];
     if (image) {
       image.x = x;
@@ -47,7 +51,7 @@ export const useImagesStore = defineStore('images', () => {
     }
   }
 
-  function resizeImageTo(imageID: string, width: number, height: number) {
+  function resizeImageTo(imageID: string, width: number, height: number): void {
     const image = images.value[imageID];
     if (image) {
       image.width = width;
@@ -58,6 +62,7 @@ export const useImagesStore = defineStore('images', () => {
   return {
     images,
     imageIDs,
+    getImageByID,
     addImage,
     moveImageTo,
     resizeImageTo,

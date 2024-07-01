@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { useCanvasStore } from '@/stores/canvas';
-import { useImagesStore } from '@/stores/images';
 import { useSelectionStore } from '@/stores/selection';
 import { storeToRefs } from 'pinia';
 import ImageComponent from './ImageComponent.vue';
+import { useLayers } from '@/composables/useLayers';
 
 const canvasStore = useCanvasStore();
 const { height, width, canvasRef } = storeToRefs(canvasStore);
-const imagesStore = useImagesStore();
-const { imageIDs } = storeToRefs(imagesStore);
+const { layerIDs } = useLayers();
 const selectionStore = useSelectionStore();
 const { clearSelection } = selectionStore;
 function onClickCanvas(event: MouseEvent) {
@@ -23,11 +22,23 @@ function onClickCanvas(event: MouseEvent) {
       width: `${width}px`,
       height: `${height}px`,
     }"
-    class="bg-red-500 overflow-hidden relative"
+    class="overflow-hidden relative"
     ref="canvasRef"
     @mousedown="onClickCanvas"
   >
-    <ImageComponent v-for="imageID in imageIDs" :key="imageID" :imageID />
+    <div
+      :style="{
+        width: `${width}px`,
+        height: `${height}px`,
+        backgroundImage:
+          'repeating-conic-gradient(#b9b9b9 0% 25%, #535353 0% 50%)',
+        backgroundPosition: '0 0, 16px 16px',
+        backgroundSize: '32px 32px',
+        backgroundColor: '#535353',
+      }"
+      data-export-ignore
+    ></div>
+    <ImageComponent v-for="layerID in layerIDs" :key="layerID" :layerID />
   </div>
 </template>
 <style></style>

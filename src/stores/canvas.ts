@@ -15,7 +15,9 @@ export const useCanvasStore = defineStore('canvas', () => {
       ignoreElements: (element) => {
         return element.hasAttribute('data-export-ignore');
       },
+      backgroundColor: 'transparent',
     });
+    document.body.appendChild(canvas);
 
     const mimeType = 'image/png';
     const fileName = 'exported_image.png';

@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import { useLayerByID } from '@/composables/useLayerByID';
 import { useActionsStore } from '@/stores/actions';
 import { useImagesStore } from '@/stores/images';
 import { useSelectionStore } from '@/stores/selection';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 
-const { imageID } = defineProps<{
-  imageID: string;
+const { layerID } = defineProps<{
+  layerID: string;
 }>();
+
+const { image } = useLayerByID(layerID);
 
 const imagesStore = useImagesStore();
 const { images } = storeToRefs(imagesStore);
@@ -19,13 +22,13 @@ const { dragging, objectToAct, mousePosition, resizing } =
   storeToRefs(actionsStore);
 const { startDragging, startResizing } = actionsStore;
 const draggingThis = computed(
-  () => dragging.value && objectToAct.value === imageID
+  () => dragging.value && objectToAct.value === image.value!.id
 );
 const resizingThis = computed(
-  () => resizing.value && objectToAct.value === imageID
+  () => resizing.value && objectToAct.value === image.value!.id
 );
 const isThisSelected = computed(
-  () => selectedImage.value != null && selectedImage.value === imageID
+  () => selectedImage.value != null && selectedImage.value === image.value!.id
 );
 const { moveImageTo, resizeImageTo } = imagesStore;
 const initiaImagePositionInCanvas = ref({ x: 0, y: 0 });
@@ -60,14 +63,14 @@ const localDimensions = computed(() => {
 
 watch(draggingThis, (newDraggingThis, oldDraggingThis) => {
   if (oldDraggingThis && !newDraggingThis) {
-    moveImageTo(imageID, localPosition.value.x, localPosition.value.y);
+    moveImageTo(image.value!.id, localPosition.value.x, localPosition.value.y);
   }
 });
 
 watch(resizingThis, (newResizingThis, oldResizingThis) => {
   if (oldResizingThis && !newResizingThis) {
     resizeImageTo(
-      imageID,
+      image.value!.id,
       localDimensions.value.width,
       localDimensions.value.height
     );
@@ -75,10 +78,10 @@ watch(resizingThis, (newResizingThis, oldResizingThis) => {
 });
 
 function onStartDragging(event: MouseEvent) {
-  const imageData = images.value[imageID];
+  const imageData = images.value[image.value!.id];
   if (!dragging.value && imageData) {
-    startDragging({ x: event.pageX, y: event.pageY }, imageID);
-    setSelectedImage(imageID);
+    startDragging({ x: event.pageX, y: event.pageY }, image.value!.id);
+    setSelectedImage(image.value!.id);
     initiaImagePositionInCanvas.value = {
       x: imageData.x,
       y: imageData.y,
@@ -93,8 +96,8 @@ function onStartDragging(event: MouseEvent) {
 function onStartResizing(event: MouseEvent) {
   event.stopPropagation();
   if (!dragging.value && imageRef.value) {
-    startResizing({ x: event.pageX, y: event.pageY }, imageID);
-    setSelectedImage(imageID);
+    startResizing({ x: event.pageX, y: event.pageY }, image.value!.id);
+    setSelectedImage(image.value!.id);
     initiaImagePositionInScreen.value = {
       x: imageRef.value.getBoundingClientRect().x,
       y: imageRef.value.getBoundingClientRect().y,
@@ -108,13 +111,13 @@ function onStartResizing(event: MouseEvent) {
 </script>
 <template>
   <div
-    v-if="images[imageID]"
+    v-if="image"
     class="absolute max-w-none"
     :style="{
-      width: `${resizingThis ? localDimensions.width : images[imageID]!.width}px`,
-      height: `${resizingThis ? localDimensions.height : images[imageID]!.height}px`,
-      left: `${draggingThis ? localPosition.x : images[imageID]!.x}px`,
-      top: `${draggingThis ? localPosition.y : images[imageID]!.y}px`,
+      width: `${resizingThis ? localDimensions.width : image!.width}px`,
+      height: `${resizingThis ? localDimensions.height : image!.height}px`,
+      left: `${draggingThis ? localPosition.x : image!.x}px`,
+      top: `${draggingThis ? localPosition.y : image!.y}px`,
     }"
     :draggable="false"
     @dragstart.prevent
@@ -126,13 +129,13 @@ function onStartResizing(event: MouseEvent) {
       {{ mousePosition.x - initiaImagePositionInScreen.x }}</span
     >
     <img
-      :src="images[imageID]!.data"
+      :src="image!.data"
       class="absolute max-w-none w-full h-full select-none"
       :draggable="false"
       @dragstart.prevent
     />
     <div
-      v-if="images[imageID] && isThisSelected"
+      v-if="image && isThisSelected"
       class="absolute max-w-none w-full h-full border-teal-400 bg-transparent pointer-events-none border-2"
       data-export-ignore
     >

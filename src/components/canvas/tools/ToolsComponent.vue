@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useImagesStore } from '@/stores/images';
 import { useCanvasStore } from '@/stores/canvas';
 import loadImageData from '@/utils/loadImageData';
+import { useLayers } from '@/composables/useLayers';
 
-const imagesStore = useImagesStore();
 const { exportImage } = useCanvasStore();
+const { addLayerForImage } = useLayers();
 
 const fileInput = ref<HTMLInputElement | null>(null);
 
@@ -21,7 +21,8 @@ const onLoadImage = async (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0];
   if (!file) return;
   const imageData = await loadImageData(file);
-  imagesStore.addImage(imageData);
+  addLayerForImage(imageData, {});
+  (event.target as HTMLInputElement).value = '';
 };
 </script>
 <template>
