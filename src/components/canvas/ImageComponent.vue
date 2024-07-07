@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { useDragger } from '@/composables/useDragger';
 import { useLayerByID } from '@/composables/useLayerByID';
+import { usePosition } from '@/composables/usePosition';
+import { useResizer } from '@/composables/useResizer';
 import { useActionsStore } from '@/stores/actions';
-import { useImagesStore } from '@/stores/images';
 import { useSelectionStore } from '@/stores/selection';
 import { storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 const { layerID } = defineProps<{
   layerID: string;
@@ -12,102 +14,34 @@ const { layerID } = defineProps<{
 
 const { image } = useLayerByID(layerID);
 
-const imagesStore = useImagesStore();
-const { images } = storeToRefs(imagesStore);
 const selectionStore = useSelectionStore();
 const { selectedImage } = storeToRefs(selectionStore);
-const { setSelectedImage } = selectionStore;
 const actionsStore = useActionsStore();
-const { dragging, objectToAct, mousePosition, resizing } =
-  storeToRefs(actionsStore);
-const { startDragging, startResizing } = actionsStore;
-const draggingThis = computed(
-  () => dragging.value && objectToAct.value === image.value!.id
-);
-const resizingThis = computed(
-  () => resizing.value && objectToAct.value === image.value!.id
-);
+const { mousePosition } = storeToRefs(actionsStore);
 const isThisSelected = computed(
   () => selectedImage.value != null && selectedImage.value === image.value!.id
 );
-const { moveImageTo, resizeImageTo } = imagesStore;
-const initiaImagePositionInCanvas = ref({ x: 0, y: 0 });
-const initiaImagePositionInScreen = ref({ x: 0, y: 0 });
-const initialMousePosition = ref({ x: 0, y: 0 });
 const imageRef = ref<HTMLDivElement | null>(null);
 const debugMode = false;
 
-const localPosition = computed(() => {
-  return {
-    x:
-      mousePosition.value.x -
-      initialMousePosition.value.x +
-      initiaImagePositionInCanvas.value.x,
-    y:
-      mousePosition.value.y -
-      initialMousePosition.value.y +
-      initiaImagePositionInCanvas.value.y,
-  };
+const {
+  initiaImagePositionInCanvas,
+  initiaImagePositionInScreen,
+  initialMousePosition,
+} = usePosition();
+
+const { localDimensions, resizingThis, onStartResizing } = useResizer({
+  imageRef,
+  image,
+  initiaImagePositionInScreen,
+  initialMousePosition,
 });
-
-const localDimensions = computed(() => {
-  const calculatedWidth =
-    mousePosition.value.x - initiaImagePositionInScreen.value.x;
-  const calculatedHeight =
-    mousePosition.value.y - initiaImagePositionInScreen.value.y;
-  return {
-    width: calculatedWidth > 1 ? calculatedWidth : 1,
-    height: calculatedHeight > 1 ? calculatedHeight : 1,
-  };
+const { localPosition, draggingThis, onStartDragging } = useDragger({
+  image,
+  initiaImagePositionInCanvas,
+  initiaImagePositionInScreen,
+  initialMousePosition,
 });
-
-watch(draggingThis, (newDraggingThis, oldDraggingThis) => {
-  if (oldDraggingThis && !newDraggingThis) {
-    moveImageTo(image.value!.id, localPosition.value.x, localPosition.value.y);
-  }
-});
-
-watch(resizingThis, (newResizingThis, oldResizingThis) => {
-  if (oldResizingThis && !newResizingThis) {
-    resizeImageTo(
-      image.value!.id,
-      localDimensions.value.width,
-      localDimensions.value.height
-    );
-  }
-});
-
-function onStartDragging(event: MouseEvent) {
-  const imageData = images.value[image.value!.id];
-  if (!dragging.value && imageData) {
-    startDragging({ x: event.pageX, y: event.pageY }, image.value!.id);
-    setSelectedImage(image.value!.id);
-    initiaImagePositionInCanvas.value = {
-      x: imageData.x,
-      y: imageData.y,
-    };
-    initialMousePosition.value = {
-      x: event.pageX,
-      y: event.pageY,
-    };
-  }
-}
-
-function onStartResizing(event: MouseEvent) {
-  event.stopPropagation();
-  if (!dragging.value && imageRef.value) {
-    startResizing({ x: event.pageX, y: event.pageY }, image.value!.id);
-    setSelectedImage(image.value!.id);
-    initiaImagePositionInScreen.value = {
-      x: imageRef.value.getBoundingClientRect().x,
-      y: imageRef.value.getBoundingClientRect().y,
-    };
-    initialMousePosition.value = {
-      x: event.pageX,
-      y: event.pageY,
-    };
-  }
-}
 </script>
 <template>
   <div
