@@ -10,10 +10,8 @@ const { height, width, canvasRef } = storeToRefs(canvasStore);
 const { layerIDs } = useLayers();
 const selectionStore = useSelectionStore();
 const { clearSelection } = selectionStore;
-function onClickCanvas(event: MouseEvent) {
-  if (event.target === canvasRef.value) {
-    clearSelection();
-  }
+function onClickCanvas() {
+  clearSelection();
 }
 </script>
 <template>
@@ -24,7 +22,6 @@ function onClickCanvas(event: MouseEvent) {
     }"
     class="overflow-hidden relative"
     ref="canvasRef"
-    @mousedown="onClickCanvas"
   >
     <div
       :style="{
@@ -36,6 +33,7 @@ function onClickCanvas(event: MouseEvent) {
         backgroundSize: '32px 32px',
         backgroundColor: '#535353',
       }"
+      @mousedown="onClickCanvas"
       data-export-ignore
     ></div>
     <ImageComponent v-for="layerID in layerIDs" :key="layerID" :layerID />
