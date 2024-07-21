@@ -34,6 +34,8 @@ function onClickCanvas() {
         backgroundColor: '#535353',
       }"
       @mousedown="onClickCanvas"
+      :draggable="false"
+      @dragstart.prevent
       data-export-ignore
     ></div>
     <ImageComponent v-for="layerID in layerIDs" :key="layerID" :layerID />

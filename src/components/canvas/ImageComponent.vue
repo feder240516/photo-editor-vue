@@ -2,7 +2,7 @@
 import { useDragger } from '@/composables/useDragger';
 import { useLayerByID } from '@/composables/useLayerByID';
 import { usePosition } from '@/composables/usePosition';
-import { useResizer } from '@/composables/useResizer';
+import { buildResizerPosition, useResizer } from '@/composables/useResizer';
 import { useActionsStore } from '@/stores/actions';
 import { useSelectionStore } from '@/stores/selection';
 import { storeToRefs } from 'pinia';
@@ -42,6 +42,14 @@ const { localPosition, draggingThis, onStartDragging } = useDragger({
   initiaImagePositionInScreen,
   initialMousePosition,
 });
+
+const onResizerMouseDown = (event: MouseEvent) => {
+  const position = (event.target as HTMLElement).dataset.name;
+  if (position === undefined) {
+    throw new Error('Element has no data-name attribute attached');
+  }
+  onStartResizing(event, position ?? '');
+};
 </script>
 <template>
   <div
@@ -74,37 +82,44 @@ const { localPosition, draggingThis, onStartDragging } = useDragger({
       data-export-ignore
     >
       <div
-        data-name="top-left"
+        :data-name="buildResizerPosition('left', 'top')"
         class="absolute top-0 left-0 w-2 h-2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-teal-400"
+        @mousedown="onResizerMouseDown"
       ></div>
       <div
-        data-name="top-center"
+        :data-name="buildResizerPosition('center', 'top')"
         class="absolute top-0 left-1/2 w-2 h-2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-teal-400"
+        @mousedown="onResizerMouseDown"
       ></div>
       <div
-        data-name="top-right"
+        :data-name="buildResizerPosition('right', 'top')"
         class="absolute top-0 right-0 w-2 h-2 translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-teal-400"
+        @mousedown="onResizerMouseDown"
       ></div>
       <div
-        data-name="center-left"
+        :data-name="buildResizerPosition('left', 'center')"
         class="absolute top-1/2 left-0 w-2 h-2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-teal-400"
+        @mousedown="onResizerMouseDown"
       ></div>
       <div
-        data-name="center-right"
+        :data-name="buildResizerPosition('right', 'center')"
         class="absolute top-1/2 right-0 w-2 h-2 translate-x-1/2 -translate-y-1/2 pointer-events-auto bg-teal-400"
+        @mousedown="onResizerMouseDown"
       ></div>
       <div
-        data-name="bottom-left"
+        :data-name="buildResizerPosition('left', 'bottom')"
         class="absolute bottom-0 left-0 w-2 h-2 -translate-x-1/2 translate-y-1/2 pointer-events-auto bg-teal-400"
+        @mousedown="onResizerMouseDown"
       ></div>
       <div
-        data-name="bottom-center"
+        :data-name="buildResizerPosition('center', 'bottom')"
         class="absolute bottom-0 left-1/2 w-2 h-2 -translate-x-1/2 translate-y-1/2 pointer-events-auto bg-teal-400"
+        @mousedown="onResizerMouseDown"
       ></div>
       <div
-        data-name="bottom-right"
+        :data-name="buildResizerPosition('right', 'bottom')"
         class="absolute bottom-0 right-0 w-2 h-2 translate-x-1/2 translate-y-1/2 pointer-events-auto bg-teal-400"
-        @mousedown="onStartResizing"
+        @mousedown="onResizerMouseDown"
       ></div>
     </div>
   </div>

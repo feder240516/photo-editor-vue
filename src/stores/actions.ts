@@ -1,3 +1,7 @@
+import type {
+  XResizerHandleEnum,
+  YResizerHandleEnum,
+} from '@/composables/useResizer';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
@@ -12,6 +16,10 @@ export const useActionsStore = defineStore('actions', () => {
   const actionToDo = ref<MouseAction>('nothing');
   const dragging = computed(() => actionToDo.value === 'drag');
   const resizing = computed(() => actionToDo.value === 'resize');
+  const resizingParams = ref<{
+    xHandle: XResizerHandleEnum;
+    yHandle: YResizerHandleEnum;
+  }>({ xHandle: 'right', yHandle: 'bottom' });
   const trackingMouseMovement = computed(
     () => actionToDo.value === 'drag' || actionToDo.value === 'resize'
   );
@@ -27,10 +35,18 @@ export const useActionsStore = defineStore('actions', () => {
     mousePosition.value = { ...position };
   }
 
-  function startResizing(position: MousePosition, objectID: string) {
+  function startResizing(
+    position: MousePosition,
+    objectID: string,
+    {
+      xHandle,
+      yHandle,
+    }: { xHandle: XResizerHandleEnum; yHandle: YResizerHandleEnum }
+  ) {
     actionToDo.value = 'resize';
     objectToAct.value = objectID;
     mousePosition.value = { ...position };
+    resizingParams.value = { xHandle, yHandle };
   }
 
   function stopTrackingMouse() {
@@ -47,6 +63,7 @@ export const useActionsStore = defineStore('actions', () => {
   return {
     dragging,
     resizing,
+    resizingParams,
     trackingMouseMovement,
     objectToAct,
     mousePosition,
