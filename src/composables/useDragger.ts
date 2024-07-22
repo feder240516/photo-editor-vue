@@ -50,7 +50,7 @@ export function useDragger({
     }
   });
 
-  function onStartDragging(event: MouseEvent) {
+  function onStartDragging(event: PointerEvent) {
     const imageData = images.value[image.value!.id];
     if (!dragging.value && imageData) {
       startDragging({ x: event.pageX, y: event.pageY }, image.value!.id);

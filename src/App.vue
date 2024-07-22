@@ -6,12 +6,12 @@ const actionsStore = useActionsStore();
 const { trackingMouseMovement } = storeToRefs(actionsStore);
 const { stopTrackingMouse, updateMousePosition } = actionsStore;
 onMounted(() => {
-  document.addEventListener('mousemove', (event) => {
+  document.addEventListener('pointermove', (event) => {
     if (trackingMouseMovement.value) {
       updateMousePosition({ x: event.pageX, y: event.pageY });
     }
   });
-  document.addEventListener('mouseup', () => {
+  document.addEventListener('pointerup', () => {
     stopTrackingMouse();
   });
 });

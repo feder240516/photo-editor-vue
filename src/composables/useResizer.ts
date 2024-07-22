@@ -87,7 +87,7 @@ export function useResizer({
     }
   });
 
-  function onStartResizing(event: MouseEvent, position: string) {
+  function onStartResizing(event: PointerEvent, position: string) {
     event.stopPropagation();
     const { xHandle: xPosition, yHandle: yPosition } =
       parseResizerHandle(position);
