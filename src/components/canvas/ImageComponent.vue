@@ -33,6 +33,7 @@ const {
 const { localDimensions, resizingThis, onStartResizing } = useResizer({
   imageRef,
   image,
+  initiaImagePositionInCanvas,
   initiaImagePositionInScreen,
   initialMousePosition,
 });
@@ -58,8 +59,8 @@ const onResizerMouseDown = (event: MouseEvent) => {
     :style="{
       width: `${resizingThis ? localDimensions.width : image!.width}px`,
       height: `${resizingThis ? localDimensions.height : image!.height}px`,
-      left: `${draggingThis ? localPosition.x : image!.x}px`,
-      top: `${draggingThis ? localPosition.y : image!.y}px`,
+      left: `${draggingThis ? localPosition.x : resizingThis ? localDimensions.x : image!.x}px`,
+      top: `${draggingThis ? localPosition.y : resizingThis ? localDimensions.y : image!.y}px`,
     }"
     :draggable="false"
     @dragstart.prevent

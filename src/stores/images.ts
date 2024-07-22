@@ -19,6 +19,13 @@ export type ImageData = {
   height: number;
 };
 
+export type ResizeImageArgs = {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+};
+
 export const useImagesStore = defineStore('images', () => {
   const images = ref<Record<string, ImageData>>({});
 
@@ -51,11 +58,16 @@ export const useImagesStore = defineStore('images', () => {
     }
   }
 
-  function resizeImageTo(imageID: string, width: number, height: number): void {
+  function resizeImageTo(
+    imageID: string,
+    { height, width, x, y }: ResizeImageArgs
+  ): void {
     const image = images.value[imageID];
     if (image) {
       image.width = width;
       image.height = height;
+      image.x = x;
+      image.y = y;
     }
   }
 

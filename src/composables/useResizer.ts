@@ -35,11 +35,13 @@ export function useResizer({
   imageRef,
   image,
   initiaImagePositionInScreen,
+  initiaImagePositionInCanvas,
   initialMousePosition,
 }: {
   imageRef: Ref<HTMLDivElement | null>;
   image: Ref<ImageData | null>;
   initiaImagePositionInScreen: Ref<PositionCoords>;
+  initiaImagePositionInCanvas: Ref<PositionCoords>;
   initialMousePosition: Ref<PositionCoords>;
 }) {
   const actionsStore = useActionsStore();
@@ -69,17 +71,19 @@ export function useResizer({
   const localDimensions = useLocalDimensions({
     mousePosition,
     initiaImagePositionInScreen,
+    initiaImagePositionInCanvas,
     handle,
     originalDimensions,
   });
 
   watch(resizingThis, (newResizingThis, oldResizingThis) => {
     if (oldResizingThis && !newResizingThis) {
-      resizeImageTo(
-        image.value!.id,
-        localDimensions.value.width,
-        localDimensions.value.height
-      );
+      resizeImageTo(image.value!.id, {
+        width: localDimensions.value.width,
+        height: localDimensions.value.height,
+        x: localDimensions.value.x,
+        y: localDimensions.value.y,
+      });
     }
   });
 
@@ -96,6 +100,10 @@ export function useResizer({
       initiaImagePositionInScreen.value = {
         x: imageRef.value.getBoundingClientRect().x,
         y: imageRef.value.getBoundingClientRect().y,
+      };
+      initiaImagePositionInCanvas.value = {
+        x: image.value!.x,
+        y: image.value!.y,
       };
       initialMousePosition.value = {
         x: event.pageX,

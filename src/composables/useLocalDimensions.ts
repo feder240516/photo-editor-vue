@@ -5,6 +5,7 @@ import type { XResizerHandleEnum, YResizerHandleEnum } from './useResizer';
 export type UseLocalDimensionsProps = {
   mousePosition: Ref<PositionCoords>;
   initiaImagePositionInScreen: Ref<PositionCoords>;
+  initiaImagePositionInCanvas: Ref<PositionCoords>;
   handle: Ref<{ x: XResizerHandleEnum; y: YResizerHandleEnum }>;
   originalDimensions: Ref<{ width: number; height: number }>;
 };
@@ -12,25 +13,46 @@ export type UseLocalDimensionsProps = {
 export function useLocalDimensions({
   mousePosition,
   initiaImagePositionInScreen,
+  initiaImagePositionInCanvas,
   handle,
   originalDimensions,
 }: UseLocalDimensionsProps) {
   return computed(() => {
     let calculatedWidth = originalDimensions.value.width;
-    if (handle.value.x === 'left' || handle.value.x === 'right') {
+    let xPosition = initiaImagePositionInCanvas.value.x;
+    if (handle.value.x === 'right') {
       calculatedWidth =
         mousePosition.value.x - initiaImagePositionInScreen.value.x;
+    } else if (handle.value.x === 'left') {
+      calculatedWidth =
+        initiaImagePositionInScreen.value.x +
+        originalDimensions.value.width -
+        mousePosition.value.x;
+      xPosition =
+        initiaImagePositionInCanvas.value.x +
+        originalDimensions.value.width -
+        calculatedWidth;
     }
     let calculatedHeight = originalDimensions.value.height;
-    if (handle.value.y === 'top' || handle.value.y === 'bottom') {
+    let yPosition = initiaImagePositionInCanvas.value.y;
+    if (handle.value.y === 'bottom') {
       calculatedHeight =
         mousePosition.value.y - initiaImagePositionInScreen.value.y;
+    } else if (handle.value.y === 'top') {
+      calculatedHeight =
+        initiaImagePositionInScreen.value.y +
+        originalDimensions.value.height -
+        mousePosition.value.y;
+      yPosition =
+        initiaImagePositionInCanvas.value.y +
+        originalDimensions.value.height -
+        calculatedHeight;
     }
     return {
       width: calculatedWidth > 1 ? calculatedWidth : 1,
       height: calculatedHeight > 1 ? calculatedHeight : 1,
-      x: initiaImagePositionInScreen.value.x,
-      y: initiaImagePositionInScreen.value.y,
+      x: xPosition,
+      y: yPosition,
     };
   });
 }
