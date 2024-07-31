@@ -8,7 +8,10 @@ const hasLayers = computed(() => !!layerIDs.value.length);
 const reversedLayerIDs = computed(() => layerIDs.value.slice().reverse());
 </script>
 <template>
-  <div v-if="hasLayers" class="border-2 border-gray-700 rounded-md p-4">
+  <div
+    v-if="hasLayers"
+    class="border-2 border-gray-700 bg-background rounded-md p-4"
+  >
     <SingleLayerComponent
       v-for="layerID in reversedLayerIDs"
       :key="layerID"

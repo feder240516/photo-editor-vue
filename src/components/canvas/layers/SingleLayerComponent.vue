@@ -22,8 +22,8 @@ const divClass = computed(
 <template>
   <div :class="divClass">
     <span class="w-[200px]">{{ layer?.name }}</span>
-    <button @click="moveThisLayerUp">Move up</button>
-    <button @click="moveThisLayerDown">Move down</button>
+    <button class="w-fit" @click="moveThisLayerUp">Move up</button>
+    <button class="w-fit" @click="moveThisLayerDown">Move down</button>
   </div>
 </template>
 
