@@ -1,8 +1,10 @@
-export function createEnum<T extends readonly string[]>(values: T) {
+export type BaseEnum = readonly string[];
+
+export function createEnum<T extends BaseEnum>(values: T) {
   return values;
 }
 
-export function isInEnum<T extends readonly string[]>(
+export function isInEnum<T extends BaseEnum>(
   value: string | undefined,
   en: T
 ): value is T[number] {
@@ -10,4 +12,4 @@ export function isInEnum<T extends readonly string[]>(
   return en.includes(value);
 }
 
-export type EnumKeys<T extends readonly string[]> = T[number];
+export type EnumKeys<T extends BaseEnum> = T[number];
