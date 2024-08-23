@@ -53,16 +53,16 @@ const onResizerMouseDown = (event: PointerEvent) => {
 };
 
 const leftTransform = computed(() => {
-  return draggingThis
+  return draggingThis.value
     ? localPosition.value.x
-    : resizingThis
+    : resizingThis.value
       ? localDimensions.value.x
       : image.value!.x;
 });
 const topTransform = computed(() =>
-  draggingThis
+  draggingThis.value
     ? localPosition.value.y
-    : resizingThis
+    : resizingThis.value
       ? localDimensions.value.y
       : image.value!.y
 );
