@@ -4,7 +4,7 @@ import { computed } from 'vue';
 
 export function useLayerByID(layerID: string) {
   const layersStore = useLayersStore();
-  const { getLayerByID, moveLayerUp, moveLayerDown } = layersStore;
+  const { getLayerByID, moveLayerUp, moveLayerDown, removeLayer } = layersStore;
   const imagesStore = useImagesStore();
   const { getImageByID } = imagesStore;
   const layer = getLayerByID(layerID);
@@ -19,5 +19,8 @@ export function useLayerByID(layerID: string) {
   function moveThisLayerDown() {
     moveLayerDown(layerID);
   }
-  return { layer, image, moveThisLayerUp, moveThisLayerDown };
+  function removeThisLayer() {
+    removeLayer(layerID);
+  }
+  return { layer, image, moveThisLayerUp, moveThisLayerDown, removeThisLayer };
 }

@@ -55,6 +55,11 @@ export const useLayersStore = defineStore('layers', () => {
     }
   }
 
+  function removeLayer(layerID: string) {
+    layerIDs.value = layerIDs.value.filter((id) => id !== layerID);
+    delete layers.value[layerID];
+  }
+
   function getLayerByID(layerID: string) {
     return layers.value[layerID];
   }
@@ -67,5 +72,6 @@ export const useLayersStore = defineStore('layers', () => {
     moveLayerTo,
     moveLayerUp,
     moveLayerDown,
+    removeLayer,
   };
 });

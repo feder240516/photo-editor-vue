@@ -9,7 +9,7 @@ const { layerID } = defineProps<{
 }>();
 
 const { selectedImage } = storeToRefs(useSelectionStore());
-const { layer, image, moveThisLayerUp, moveThisLayerDown } =
+const { layer, image, moveThisLayerUp, moveThisLayerDown, removeThisLayer } =
   useLayerByID(layerID);
 const isSelected = computed(() => selectedImage.value === image.value?.id);
 const greenBorderClass = computed(() =>
@@ -24,6 +24,7 @@ const divClass = computed(
     <span class="w-[200px]">{{ layer?.name }}</span>
     <button class="w-fit" @click="moveThisLayerUp">Move up</button>
     <button class="w-fit" @click="moveThisLayerDown">Move down</button>
+    <button class="w-fit" @click="removeThisLayer">Delete</button>
   </div>
 </template>
 
