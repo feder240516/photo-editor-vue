@@ -28,10 +28,16 @@ export function useLocalDimensions({
         initiaImagePositionInScreen.value.x +
         originalDimensions.value.width -
         mousePosition.value.x;
-      xPosition =
+      const maxXPosition =
         initiaImagePositionInCanvas.value.x +
         originalDimensions.value.width -
-        calculatedWidth;
+        1;
+      xPosition = Math.min(
+        initiaImagePositionInCanvas.value.x +
+          originalDimensions.value.width -
+          calculatedWidth,
+        maxXPosition
+      );
     }
     let calculatedHeight = originalDimensions.value.height;
     let yPosition = initiaImagePositionInCanvas.value.y;
@@ -43,10 +49,16 @@ export function useLocalDimensions({
         initiaImagePositionInScreen.value.y +
         originalDimensions.value.height -
         mousePosition.value.y;
-      yPosition =
+      const maxYPosition =
         initiaImagePositionInCanvas.value.y +
         originalDimensions.value.height -
-        calculatedHeight;
+        1;
+      yPosition = Math.min(
+        initiaImagePositionInCanvas.value.y +
+          originalDimensions.value.height -
+          calculatedHeight,
+        maxYPosition
+      );
     }
     return {
       width: calculatedWidth > 1 ? calculatedWidth : 1,
