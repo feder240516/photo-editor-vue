@@ -51,6 +51,21 @@ const onResizerMouseDown = (event: PointerEvent) => {
   }
   onStartResizing(event, position ?? '');
 };
+
+const leftTransform = computed(() => {
+  return draggingThis
+    ? localPosition.value.x
+    : resizingThis
+      ? localDimensions.value.x
+      : image.value!.x;
+});
+const topTransform = computed(() =>
+  draggingThis
+    ? localPosition.value.y
+    : resizingThis
+      ? localDimensions.value.y
+      : image.value!.y
+);
 </script>
 <template>
   <div
@@ -59,8 +74,9 @@ const onResizerMouseDown = (event: PointerEvent) => {
     :style="{
       width: `${resizingThis ? localDimensions.width : image!.width}px`,
       height: `${resizingThis ? localDimensions.height : image!.height}px`,
-      left: `${draggingThis ? localPosition.x : resizingThis ? localDimensions.x : image!.x}px`,
-      top: `${draggingThis ? localPosition.y : resizingThis ? localDimensions.y : image!.y}px`,
+      transform: `translate(${leftTransform}px, ${topTransform}px)`,
+      left: `0px`,
+      top: `0px`,
     }"
     :draggable="false"
     @dragstart.prevent
